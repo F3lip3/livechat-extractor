@@ -8,7 +8,7 @@ import { query } from '../infra/mssql/database.js';
 const init = () => {
   const token = getArgument('token');
   if (!token) {
-    console.error(chalk.red('> err: no token provided. Use --token argument.'));
+    log('no token provided. Use --token argument.', 'error');
     process.exit(1);
   }
 
@@ -53,11 +53,11 @@ const init = () => {
       const createdGroups = await Group.create(groupsData);
 
       log(`${createdGroups.length} groups created`, 'success');
-
       process.exit();
     }
 
     log('no groups found');
+    process.exit();
   });
 };
 
