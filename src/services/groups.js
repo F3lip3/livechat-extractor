@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 import Group from '../schemas/Group.js';
+import GroupsRepository from '../repositories/groups.js';
 import { asyncFilter, execute, getArgument, log, paths } from '../utils.js';
 
 import '../infra/mongoose/connection.js';
-import { query } from '../infra/mssql/database.js';
 
 const init = () => {
   const token = getArgument('token');
@@ -40,12 +40,14 @@ const init = () => {
 
       const groupsData = await Promise.all(
         uniqueGroups.map(async group => {
-          const groupId = await findOrInsertGroup(group);
+          const { group_id, account_group_id } =
+            await GroupsRepository.findOrInsert(group);
 
           return {
             id: group.id,
             name: group.name,
-            hc_id: groupId
+            group_id,
+            account_group_id
           };
         })
       );
@@ -67,48 +69,6 @@ const groupExists = async name => {
   });
 
   return exists;
-};
-
-const findOrInsertGroup = async group => {
-  const existingGroup = await query(
-    `
-    SELECT id, name, isActive FROM [group] WITH(NOLOCK)
-    WHERE name = @name`,
-    { name: group.name }
-  );
-
-  if (existingGroup?.isActive) {
-    return existingGroup.id;
-  }
-
-  if (existingGroup && !existingGroup.isActive) {
-    await query('UPDATE [group] SET isActive = 1 WHERE id = @id', {
-      id: existingGroup.id
-    });
-
-    return existingGroup.id;
-  }
-
-  const newGroup = await query(
-    `
-    INSERT INTO [group]([name], [isActive], [createdAt], [updatedAt])
-    OUTPUT inserted.id
-    VALUES (@name, 1, GETDATE(), GETDATE())`,
-    { name: group.name }
-  );
-
-  await linkGroupToAccount(newGroup.id);
-
-  return newGroup.id;
-};
-
-const linkGroupToAccount = async groupId => {
-  await query(
-    `
-    INSERT INTO [accountGroup]([accountId], [groupId], [externalId], [createdAt])
-    VALUES (6, @groupId, NEWID(), GETDATE())`,
-    { groupId }
-  );
 };
 
 init();

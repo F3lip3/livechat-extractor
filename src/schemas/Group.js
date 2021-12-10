@@ -7,7 +7,12 @@ const GroupSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
-    hc_id: {
+    group_id: {
+      type: Number,
+      required: true,
+      unique: true
+    },
+    account_group_id: {
       type: Number,
       required: true,
       unique: true
