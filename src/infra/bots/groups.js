@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
-import Group from '../schemas/Group.js';
-import GroupsRepository from '../repositories/groups.js';
-import { asyncFilter, execute, getArgument, log, paths } from '../utils.js';
+import Group from '../../schemas/Group.js';
+import GroupsRepository from '../../repositories/groups.js';
+import { asyncFilter, execute, getArgument, log, paths } from '../../utils.js';
 
-import '../infra/mongoose/connection.js';
+import '../mongoose/connection.js';
 
 const init = () => {
   const token = getArgument('token');

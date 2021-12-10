@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ArchiveSchema = new mongoose.Schema(
+const ChatSchema = new mongoose.Schema(
   {
     chat_id: {
       type: String,
@@ -10,7 +10,7 @@ const ArchiveSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    hc_id: {
+    conversation_id: {
       type: Number,
       required: true,
       unique: true
@@ -21,4 +21,4 @@ const ArchiveSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('Archive', ArchiveSchema);
+export default mongoose.model('Chat', ChatSchema);

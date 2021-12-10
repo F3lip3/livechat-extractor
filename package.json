@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "live-server --port=3000 --host=localhost src/index.html",
-    "extract-archives": "node src/services/archives",
-    "extract-groups": "node src/services/groups",
-    "extract-tickets": "node src/services/tickets"
+    "extract-chats": "node src/infra/bots/chats",
+    "extract-groups": "node src/infra/bots/groups",
+    "extract-tickets": "node src/infra/bots/tickets"
   },
   "devDependencies": {
     "live-server": "^1.2.1"
