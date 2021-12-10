@@ -97,7 +97,18 @@ const findOrInsertGroup = async group => {
     { name: group.name }
   );
 
+  await linkGroupToAccount(newGroup.id);
+
   return newGroup.id;
+};
+
+const linkGroupToAccount = async groupId => {
+  await query(
+    `
+    INSERT INTO [accountGroup]([accountId], [groupId], [externalId], [createdAt])
+    VALUES (6, @groupId, NEWID(), GETDATE())`,
+    { groupId }
+  );
 };
 
 init();
