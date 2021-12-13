@@ -14,6 +14,17 @@ const ChatSchema = new mongoose.Schema(
       type: Number,
       required: true,
       unique: true
+    },
+    users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      }
+    ],
+    group: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Group',
+      required: false
     }
   },
   {
