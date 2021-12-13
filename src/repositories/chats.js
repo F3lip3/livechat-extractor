@@ -1,7 +1,7 @@
 import { query } from '../infra/mssql/database.js';
 
 export default class ChatsRepository {
-  static findOrInsert = async chat => {
+  public findOrInsert = async chat => {
     const existingChat = await query(
       `
       SELECT [chat].id

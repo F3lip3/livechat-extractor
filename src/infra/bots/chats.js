@@ -1,5 +1,7 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
+import ChatsRepository from '../../repositories/chats.js';
+import UsersRepository from '../../repositories/users.js';
 import ChatsService from '../../services/chats.js';
 
 import { execute, getArgument, log } from '../../utils.js';
@@ -32,7 +34,9 @@ const init = () => {
     const { chats, next_page_id } = response;
 
     if (chats.length) {
-      const chatsService = new ChatsService();
+      const chatsRepository = new ChatsRepository();
+      const usersRepository = new UsersRepository();
+      const chatsService = new ChatsService(chatsRepository, usersRepository);
 
       log(`found ${chats.length} chats`);
       await Promise.all(

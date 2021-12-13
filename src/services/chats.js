@@ -1,11 +1,15 @@
 import Chat from '../schemas/Chat.js';
 import Group from '../schemas/Group.js';
-import ChatsRepository from '../repositories/chats.js';
 import UsersService from '../services/users.js';
 import { log } from '../utils.js';
 
 export default class ChatsService {
   private allGroups = [];
+  private usersService;
+
+  constructor(private chatsRepository, private usersRepository) {
+    this.usersService = new UsersService(usersRepository);
+  }
 
   public add = async chat => {
     if (!chat.thread?.id) {
@@ -46,7 +50,7 @@ export default class ChatsService {
     );
 
     log('adding chat to database');
-    const { id: conversation_id } = await ChatsRepository.findOrInsert({
+    const { id: conversation_id } = await this.chatsRepository.findOrInsert({
       externalId: chat.thread.id,
       userId: customer.account_user_id,
       groupId: group?.account_group_id
@@ -68,7 +72,7 @@ export default class ChatsService {
   private addUsers = async users => {
     const mappedUsers = await Promise.all(
       users.map(async user => {
-        const { id, type, account_user_id } = await UsersService.add(user);
+        const { id, type, account_user_id } = await this.usersService.add(user);
 
         return {
           id,

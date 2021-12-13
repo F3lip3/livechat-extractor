@@ -3,7 +3,9 @@ import UsersRepository from '../repositories/users.js';
 import { log } from '../utils.js';
 
 export default class UsersService {
-  static add = async user => {
+  constructor(private usersRepository) {}
+
+  public add = async user => {
     if (!user.email) {
       log('cancelling add user action because it has no email');
       return undefined;
@@ -11,13 +13,13 @@ export default class UsersService {
 
     log(`adding user ${user.email}`);
 
-    const existingUser = await UsersService.find(user.email);
+    const existingUser = await this.find(user.email);
     if (existingUser) {
       log(`user already exists`);
       return existingUser;
     }
 
-    const { user_id, account_user_id } = await UsersRepository.findOrInsert(
+    const { user_id, account_user_id } = await this.usersRepository.findOrInsert(
       user
     );
 
@@ -34,7 +36,7 @@ export default class UsersService {
     return newUser;
   };
 
-  static find = async email => {
+  private find = async email => {
     const existingUser = await User.findOne({ email });
 
     return existingUser;

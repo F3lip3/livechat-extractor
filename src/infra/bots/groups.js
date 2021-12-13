@@ -38,10 +38,12 @@ const init = () => {
         process.exit();
       }
 
+      const groupsRepository = new GroupsRepository();
+
       const groupsData = await Promise.all(
         uniqueGroups.map(async group => {
           const { group_id, account_group_id } =
-            await GroupsRepository.findOrInsert(group);
+            await groupsRepository.findOrInsert(group);
 
           return {
             id: group.id,
