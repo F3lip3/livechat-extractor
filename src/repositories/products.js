@@ -1,5 +1,5 @@
 export default class ProductsRepository {
-  public findOrInsert = async product => {
+  findOrInsert = async product => {
     const existingProduct = await query(
       `
       SELECT [product].id,
@@ -16,7 +16,7 @@ export default class ProductsRepository {
       let { id: product_id, accountProductId: account_product_id } =
         existingProduct;
       if (!account_product_id) {
-        const accountProduct = await this.linkProductToAccount(product_id);
+        const accountProduct = await this._linkProductToAccount(product_id);
         account_product_id = accountProduct.id;
       }
 
@@ -35,7 +35,7 @@ export default class ProductsRepository {
       { name: product.name }
     );
 
-    const accountProduct = await this.linkProductToAccount(newProduct.id);
+    const accountProduct = await this._linkProductToAccount(newProduct.id);
 
     return {
       product_id: newProduct.id,
@@ -43,7 +43,7 @@ export default class ProductsRepository {
     };
   };
 
-  private linkProductToAccount = async productId => {
+  _linkProductToAccount = async productId => {
     const newAccountProduct = await query(
       `
       INSERT INTO [accountProduct]([accountId], [productId], [externalId], [createdAt])

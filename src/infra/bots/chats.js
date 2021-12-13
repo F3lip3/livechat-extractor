@@ -1,8 +1,10 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
 import ChatsRepository from '../../repositories/chats.js';
+import MessagesRepository from '../../repositories/messages.js';
 import UsersRepository from '../../repositories/users.js';
 import ChatsService from '../../services/chats.js';
+import MessagesService from '../../services/messages.js';
 
 import { execute, getArgument, log } from '../../utils.js';
 
@@ -35,18 +37,31 @@ const init = () => {
 
     if (chats.length) {
       const chatsRepository = new ChatsRepository();
+      const messagesRepository = new MessagesRepository();
       const usersRepository = new UsersRepository();
       const chatsService = new ChatsService(chatsRepository, usersRepository);
+      const messagesService = new MessagesService(messagesRepository);
 
       log(`found ${chats.length} chats`);
       await Promise.all(
         chats.map(async chat => {
           const mappedChat = await chatsService.add(chat);
           if (mappedChat) {
-            // add messages to chatd
+            if (!chat.thread?.events?.length) {
+              log('chat without messages. Moving to next');
+            } else {
+              await Promise.all(
+                chat.thread.events.map(async message => {
+                  await messagesService.add({
+                    chat: mappedChat,
+                    message
+                  });
+                })
+              );
+            }
           }
-        });
-      )
+        })
+      );
     }
 
     log('no archives found');

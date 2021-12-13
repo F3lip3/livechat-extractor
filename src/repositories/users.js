@@ -1,5 +1,5 @@
 export default class UsersRepository {
-  public findOrInsert = async user => {
+  findOrInsert = async user => {
     const existingUser = await query(
       `
       SELECT [user].id,
@@ -15,7 +15,7 @@ export default class UsersRepository {
     if (existingUser) {
       let { id: user_id, accountUserId: account_user_id } = existingUser;
       if (!account_user_id) {
-        const accountUser = await this.linkUserToAccount(user_id);
+        const accountUser = await this._linkUserToAccount(user_id);
         account_user_id = accountUser.id;
       }
 
@@ -34,7 +34,7 @@ export default class UsersRepository {
       { name: user.name, email: user.email }
     );
 
-    const accountUser = await this.linkUserToAccount(newUser.id);
+    const accountUser = await this._linkUserToAccount(newUser.id);
 
     return {
       user_id: newUser.id,
@@ -42,7 +42,7 @@ export default class UsersRepository {
     };
   };
 
-  private linkUserToAccount = async userId => {
+  _linkUserToAccount = async userId => {
     const newAccountUser = await query(
       `
       INSERT INTO [accountUser]([accountId], [userId], [externalId], [createdAt])

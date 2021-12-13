@@ -4,14 +4,16 @@ import UsersService from '../services/users.js';
 import { log } from '../utils.js';
 
 export default class ChatsService {
-  private allGroups = [];
-  private usersService;
+  _allGroups = [];
+  _chatsRepository;
+  _usersService;
 
-  constructor(private chatsRepository, private usersRepository) {
-    this.usersService = new UsersService(usersRepository);
+  constructor(_chatsRepository, _usersRepository) {
+    this._chatsRepository = _chatsRepository;
+    this._usersService = new UsersService(_usersRepository);
   }
 
-  public add = async chat => {
+  add = async chat => {
     if (!chat.thread?.id) {
       log('cancelling add chat action because it has no thread');
       return undefined;
@@ -22,7 +24,7 @@ export default class ChatsService {
       return undefined;
     }
 
-    const existingChat = await this.find({
+    const existingChat = await this._find({
       chat_id: chat.id,
       thread_id: chat.thread.id
     });
@@ -44,13 +46,13 @@ export default class ChatsService {
     }
 
     log('setting group');
-    const group = await this.findGroup(
+    const group = await this._findGroup(
       chat.thread?.access?.group_ids,
       allGroups
     );
 
     log('adding chat to database');
-    const { id: conversation_id } = await this.chatsRepository.findOrInsert({
+    const { id: conversation_id } = await this._chatsRepository.findOrInsert({
       externalId: chat.thread.id,
       userId: customer.account_user_id,
       groupId: group?.account_group_id
@@ -58,7 +60,7 @@ export default class ChatsService {
 
     log('saving chat');
     const newChat = await Chat.create({
-      chat_id: chat.id,
+      id: chat.id,
       thread_id: chat.thread.id,
       conversation_id,
       users,
@@ -69,10 +71,12 @@ export default class ChatsService {
     return newChat;
   };
 
-  private addUsers = async users => {
+  _addUsers = async users => {
     const mappedUsers = await Promise.all(
       users.map(async user => {
-        const { id, type, account_user_id } = await this.usersService.add(user);
+        const { id, type, account_user_id } = await this._usersService.add(
+          user
+        );
 
         return {
           id,
@@ -85,21 +89,21 @@ export default class ChatsService {
     return mappedUsers;
   };
 
-  private find = async ({ chat_id, thread_id }) => {
-    const existingChat = await Chat.exists({
-      chat_id,
+  _find = async ({ id, thread_id }) => {
+    const existingChat = await Chat.findOne({
+      id,
       thread_id
     });
 
     return existingChat;
   };
 
-  private findGroup = async (groupIds, allGroups) => {
+  _findGroup = async (groupIds, allGroups) => {
     if (!groupdIds?.length) return undefined;
-    if (!this.allGroups.length) {
-      this.allGroups = await Group.find({});
+    if (!this._allGroups.length) {
+      this._allGroups = await Group.find({});
     }
 
-    return this.allGroups.find(grp => grp.id === groupId);
+    return this._allGroups.find(grp => grp.id === groupId);
   };
 }

@@ -1,7 +1,7 @@
 import { query } from '../infra/mssql/database.js';
 
 export default class GroupsRepository {
-  public findOrInsert = async group => {
+  findOrInsert = async group => {
     const existingGroup = await query(
       `
       SELECT [group].id,
@@ -25,7 +25,7 @@ export default class GroupsRepository {
 
       let { id: group_id, accountGroupId: account_group_id } = existingGroup;
       if (!account_group_id) {
-        const accountGroup = await this.linkGroupToAccount(group_id);
+        const accountGroup = await this._linkGroupToAccount(group_id);
 
         account_group_id = accountGroup.id;
       }
@@ -44,7 +44,7 @@ export default class GroupsRepository {
       { name: group.name }
     );
 
-    const accountGroup = await this.linkGroupToAccount(newGroup.id);
+    const accountGroup = await this._linkGroupToAccount(newGroup.id);
 
     return {
       group_id: newGroup.id,
@@ -52,7 +52,7 @@ export default class GroupsRepository {
     };
   };
 
-  private linkGroupToAccount = async groupId => {
+  _linkGroupToAccount = async groupId => {
     const newAccountGroup = await query(
       `
       INSERT INTO [accountGroup]([accountId], [groupId], [externalId], [createdAt])

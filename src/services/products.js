@@ -3,19 +3,23 @@ import ProductsRepository from '../repositories/products.js';
 import { log } from '../utils.js';
 
 export default class ProductsService {
-  constructor(private productsRepository) {}
+  _productsRepository;
 
-  public add = async product => {
+  constructor(_productsRepository) {
+    this._productsRepository = _productsRepository;
+  }
+
+  add = async product => {
     log(`adding product ${product.name}`);
 
-    const existingProduct = await this.find(product.name);
+    const existingProduct = await this._find(product.name);
     if (existingProduct) {
       log(`product already exists`);
       return existingProduct;
     }
 
     const { product_id, account_product_id } =
-      await this.productsRepository.findOrInsert(product);
+      await this._productsRepository.findOrInsert(product);
 
     const newProduct = await Product.create({
       name: product.name,
@@ -27,7 +31,7 @@ export default class ProductsService {
     return newProduct;
   };
 
-  private find = async name => {
+  _find = async name => {
     const existingProduct = await Product.findOne({ name });
 
     return existingProduct;
