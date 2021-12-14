@@ -38,7 +38,7 @@ export default class ChatsService {
     const users = await this._addUsers(chat.users);
 
     log('setting customer id');
-    const customer = users.find(user => user.type === 'customer');
+    const customer = users.find(user => user?.type === 'customer');
 
     if (!customer) {
       log('cancelling add chat action because it has no customer');

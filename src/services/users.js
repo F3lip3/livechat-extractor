@@ -26,14 +26,22 @@ export default class UsersService {
     const { user_id, account_user_id } =
       await this._usersRepository.findOrInsert(user);
 
-    const newUser = await User.create({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      type: user.type,
-      user_id,
-      account_user_id
-    });
+    let newUser;
+
+    try {
+      newUser = await User.create({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        type: user.type,
+        user_id,
+        account_user_id
+      });
+    } catch (err) {
+      if (err.message.includes('duplicate key error')) {
+        newUser = await this._find(user.email);
+      }
+    }
 
     log('user created');
     return newUser;

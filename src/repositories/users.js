@@ -1,11 +1,13 @@
 import { query } from '../infra/mssql/database.js';
+import { log } from '../utils.js';
 
 export default class UsersRepository {
   findOrInsert = async user => {
     const existingUser = await query(
       `
-      SELECT [user].id,
-             [accountUser].id as [accountUserId]
+      SELECT TOP 1
+        [user].id,
+        [accountUser].id as [accountUserId]
       FROM [user] WITH(NOLOCK)
       LEFT JOIN [accountUser]
         ON [user].id = [accountUser].userId
@@ -17,7 +19,7 @@ export default class UsersRepository {
     if (existingUser) {
       let { id: user_id, accountUserId: account_user_id } = existingUser;
       if (!account_user_id) {
-        const accountUser = await this._linkUserToAccount(user_id);
+        const accountUser = await this._linkUserToAccount(user_id, false);
         account_user_id = accountUser.id;
       }
 
@@ -36,7 +38,7 @@ export default class UsersRepository {
       { name: user.name, email: user.email }
     );
 
-    const accountUser = await this._linkUserToAccount(newUser.id);
+    const accountUser = await this._linkUserToAccount(newUser.id, true);
 
     return {
       user_id: newUser.id,
@@ -44,7 +46,13 @@ export default class UsersRepository {
     };
   };
 
-  _linkUserToAccount = async userId => {
+  _linkUserToAccount = async (userId, isNew) => {
+    log(
+      isNew
+        ? `linking new user ${userId} to account 6`
+        : `linking existing user ${userId} to account 6`
+    );
+
     const newAccountUser = await query(
       `
       INSERT INTO [accountUser]([accountId], [userId], [externalId], [createdAt])

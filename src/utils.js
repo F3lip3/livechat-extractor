@@ -28,7 +28,7 @@ export const getArgument = key => {
   const args = process.argv.slice(2);
   const index = args.findIndex(arg => arg === `--${key}`);
   if (index >= 0) {
-    if (args.length >= index + 1) {
+    if (args.length > index + 1) {
       return args[index + 1];
     }
 

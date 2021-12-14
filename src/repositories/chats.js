@@ -4,7 +4,7 @@ export default class ChatsRepository {
   findOrInsert = async chat => {
     const existingChat = await query(
       `
-      SELECT [chat].id
+      SELECT TOP 1 [chat].id
       FROM [chatConversation] as [chat] WITH(NOLOCK)
       WHERE [externalId] = @externalId`,
       { externalId: chat.externalId }
