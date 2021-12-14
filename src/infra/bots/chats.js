@@ -94,4 +94,4 @@ const init = async () => {
   });
 };
 
-init();
+await init();
