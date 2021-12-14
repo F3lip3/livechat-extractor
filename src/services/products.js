@@ -27,7 +27,7 @@ export default class ProductsService {
       account_product_id
     });
 
-    log('product created', 'success');
+    log('product created');
     return newProduct;
   };
 

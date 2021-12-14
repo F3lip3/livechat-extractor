@@ -12,7 +12,7 @@ export default class MessagesService {
     const mappedMessages = messages.filter(message => !!message.text);
     if (!mappedMessages.length) {
       log('no messages found');
-      return;
+      return false;
     }
 
     log('checking existing messages');
@@ -23,7 +23,7 @@ export default class MessagesService {
 
     if (!newMessages.length) {
       log('all messages already exists');
-      return;
+      return false;
     }
 
     log('building messages batch');
@@ -56,7 +56,8 @@ export default class MessagesService {
       }))
     );
 
-    log(`${addedMessages} messages created`, 'success');
+    log(`${addedMessages} messages created`);
+    return true;
   };
 
   _find = async ({ id }) => {

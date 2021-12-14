@@ -56,7 +56,7 @@ const init = () => {
 
       const createdGroups = await Group.create(groupsData);
 
-      log(`${createdGroups.length} groups created`, 'success');
+      log(`${createdGroups.length} groups created`);
       process.exit();
     }
 

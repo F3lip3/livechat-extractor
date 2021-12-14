@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 
-const ArchivePageSchema = new mongoose.Schema(
+const PageSchema = new mongoose.Schema(
   {
+    object: {
+      type: String,
+      required: true
+    },
     next_page_id: {
       type: String,
       required: true,
@@ -13,4 +17,4 @@ const ArchivePageSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('ArchivePage', ArchivePageSchema);
+export default mongoose.model('Page', PageSchema);

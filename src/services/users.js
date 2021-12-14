@@ -35,7 +35,7 @@ export default class UsersService {
       account_user_id
     });
 
-    log('user created', 'success');
+    log('user created');
     return newUser;
   };
 

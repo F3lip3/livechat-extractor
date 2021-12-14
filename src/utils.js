@@ -27,14 +27,20 @@ export const execute = (command, callback) => {
 export const getArgument = key => {
   const args = process.argv.slice(2);
   const index = args.findIndex(arg => arg === `--${key}`);
-  if (index >= 0 && args.length >= index + 1) {
-    return args[index + 1];
+  if (index >= 0) {
+    if (args.length >= index + 1) {
+      return args[index + 1];
+    }
+
+    return true;
   }
 
-  return '';
+  return undefined;
 };
 
-export const log = (message, type = 'info') => {
+export const log = (message, type = 'trace') => {
+  const doTrace = getArgument('trace');
+
   switch (type) {
     case 'error':
       console.info(chalk.red('> error:'), message);
@@ -45,8 +51,11 @@ export const log = (message, type = 'info') => {
     case 'success':
       console.info(chalk.green('> success:'), message);
       break;
+    case 'warning':
+      console.info(chalk.magenta('> warning:'), message);
+      break;
     default:
-      console.info(chalk.gray(`> ${type}:`), message);
+      if (doTrace) console.info(chalk.gray(`> ${type}:`), message);
       break;
   }
 };

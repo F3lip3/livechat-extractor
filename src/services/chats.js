@@ -64,7 +64,7 @@ export default class ChatsService {
       group
     });
 
-    log('chat created', 'success');
+    log('chat created');
     return newChat;
   };
 
