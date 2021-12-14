@@ -21,7 +21,7 @@ const init = async () => {
   const pagesService = new PagesService();
   const nextPage = await pagesService.find('chat');
 
-  let filters = { limit: 1 };
+  let filters = { limit: 100 };
   if (nextPage) {
     filters = { page_id: nextPage.next_page_id };
   }
