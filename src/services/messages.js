@@ -1,4 +1,5 @@
 import Message from '../schemas/Message.js';
+import { asyncFilter } from '../utils.js';
 
 export default class MessagesService {
   _messagesRepository;
@@ -7,50 +8,55 @@ export default class MessagesService {
     this._messagesRepository = _messagesRepository;
   }
 
-  add = async ({ chat, message }) => {
-    if (!message.text) {
-      log('ignoring message without text');
-      return undefined;
+  add = async ({ chat, messages }) => {
+    const mappedMessages = messages.filter(message => !!message.text);
+    if (!mappedMessages.length) {
+      log('no messages found');
+      return;
     }
 
-    log('adding message');
-    const existingMessage = await this._find({ id: message.id });
-    if (existingMessage) {
-      log('message already exists');
-      return existingMessage;
+    log('checking existing messages');
+    const newMessages = asyncFilter(mappedMessages, async message => {
+      const exists = await this._find({ id: message.id });
+      return !exists;
+    });
+
+    if (!newMessages.length) {
+      log('all messages already exists');
+      return;
     }
 
-    log('finding author');
-    const user = this._findUser({
-      users: chat.users,
-      userId: message.author_id
+    log('building messages batch');
+    const messagesBatch = newMessages.map(message => {
+      const user = this._findUser({
+        users: chat.users,
+        userId: message.author_id
+      });
+
+      return {
+        id: message.id,
+        chatId: chat.conversation_id,
+        userId: user?.account_user_id,
+        text: message.text,
+        type: message.type,
+        userType: user?.type,
+        createdAt: message.created_at
+      };
     });
 
-    if (!user) {
-      log('unable to find author', 'error');
-      return undefined;
-    }
+    log('bulk adding messages');
+    const addedMessages = await this._messagesRepository.bulkInsert(
+      messagesBatch
+    );
 
-    log('adding new message');
+    await Message.create(
+      messagesBatch.map(message => ({
+        id: message.id,
+        chat
+      }))
+    );
 
-    const { id: message_id } = await this._messagesRepository.findOrInsert({
-      id: message.id,
-      chatId: chat.conversation_id
-      userId: user.account_user_id,
-      text: message.text,
-      type: message.type,
-      userType: user.type,
-      createdAt: message.created_at
-    });
-
-    const newMessage = await Message.create({
-      id: message.id,
-      chat,
-      message_id
-    });
-
-    log('message created', 'success');
-    return newMessage;
+    log(`${addedMessages} messages created`, 'success');
   };
 
   _find = async ({ id }) => {

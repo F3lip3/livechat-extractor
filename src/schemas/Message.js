@@ -11,11 +11,6 @@ const MessageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Chat',
       required: true
-    },
-    message_id: {
-      type: Number,
-      required: true,
-      unique: true
     }
   },
   {

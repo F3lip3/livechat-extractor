@@ -12,6 +12,18 @@ const config = {
   trustServerCertificate: true
 };
 
+export const bulk = async table => {
+  try {
+    const pool = await mssql.connect(config);
+    const { rowsAffected } = await pool.request().bulk(table);
+
+    return rowsAffected;
+  } catch (err) {
+    log(err, 'error');
+    process.exit(1);
+  }
+};
+
 export const query = async (command, parameters) => {
   try {
     const pool = await mssql.connect(config);

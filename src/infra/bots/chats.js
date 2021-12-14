@@ -50,14 +50,11 @@ const init = () => {
             if (!chat.thread?.events?.length) {
               log('chat without messages. Moving to next');
             } else {
-              await Promise.all(
-                chat.thread.events.map(async message => {
-                  await messagesService.add({
-                    chat: mappedChat,
-                    message
-                  });
-                })
-              );
+              log('adding messages');
+              await messagesService.add({
+                chat: mappedChat,
+                messages: chat.thread.events
+              });
             }
           }
         })
