@@ -1,5 +1,5 @@
 import Message from '../schemas/Message.js';
-import { asyncFilter } from '../utils.js';
+import { asyncFilter, log } from '../utils.js';
 
 export default class MessagesService {
   _messagesRepository;
@@ -16,7 +16,7 @@ export default class MessagesService {
     }
 
     log('checking existing messages');
-    const newMessages = asyncFilter(mappedMessages, async message => {
+    const newMessages = await asyncFilter(mappedMessages, async message => {
       const exists = await this._find({ id: message.id });
       return !exists;
     });

@@ -1,3 +1,5 @@
+import { query } from '../infra/mssql/database.js';
+
 export default class UsersRepository {
   findOrInsert = async user => {
     const existingUser = await query(

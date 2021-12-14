@@ -55,6 +55,8 @@ const init = () => {
                 chat: mappedChat,
                 messages: chat.thread.events
               });
+
+              process.exit();
             }
           }
         })

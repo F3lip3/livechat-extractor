@@ -25,7 +25,7 @@ export default class ChatsService {
     }
 
     const existingChat = await this._find({
-      chat_id: chat.id,
+      id: chat.id,
       thread_id: chat.thread.id
     });
 
@@ -35,7 +35,7 @@ export default class ChatsService {
     }
 
     log('adding or finding users');
-    const users = await addUsers(chat.users);
+    const users = await this._addUsers(chat.users);
 
     log('setting customer id');
     const customer = users.find(user => user.type === 'customer');
@@ -46,10 +46,7 @@ export default class ChatsService {
     }
 
     log('setting group');
-    const group = await this._findGroup(
-      chat.thread?.access?.group_ids,
-      allGroups
-    );
+    const group = await this._findGroup(chat.thread?.access?.group_ids);
 
     log('adding chat to database');
     const { id: conversation_id } = await this._chatsRepository.findOrInsert({
@@ -74,15 +71,9 @@ export default class ChatsService {
   _addUsers = async users => {
     const mappedUsers = await Promise.all(
       users.map(async user => {
-        const { id, type, account_user_id } = await this._usersService.add(
-          user
-        );
+        const newUser = await this._usersService.add(user);
 
-        return {
-          id,
-          type,
-          account_user_id
-        };
+        return newUser;
       })
     );
 
@@ -93,17 +84,17 @@ export default class ChatsService {
     const existingChat = await Chat.findOne({
       id,
       thread_id
-    });
+    }).populate('users');
 
     return existingChat;
   };
 
-  _findGroup = async (groupIds, allGroups) => {
-    if (!groupdIds?.length) return undefined;
+  _findGroup = async groupIds => {
+    if (!groupIds?.length) return undefined;
     if (!this._allGroups.length) {
       this._allGroups = await Group.find({});
     }
 
-    return this._allGroups.find(grp => grp.id === groupId);
+    return this._allGroups.find(grp => grp.id === groupIds[0]);
   };
 }
