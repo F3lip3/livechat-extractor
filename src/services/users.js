@@ -23,8 +23,8 @@ export default class UsersService {
 
     const newUserData = {
       id: user.id,
-      name: user.name ?? user.id,
-      email: user.email ?? user.id,
+      name: user.name?.trim() || user.id,
+      email: user.email?.trim() || user.id,
       type: user.type,
       user_id,
       account_user_id
