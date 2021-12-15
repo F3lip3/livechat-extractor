@@ -1,8 +1,16 @@
 import chalk from 'chalk';
 import child_process from 'child_process';
+import { format } from 'date-fns';
 
 export const paths = {
   base_url: 'https://api.livechatinc.com/v3.3'
+};
+
+export const info = {
+  total: 0,
+  processed: 40269,
+  started: new Date(Date.now()),
+  lastMessages: []
 };
 
 export const asyncFilter = async (array, callback) => {
@@ -39,23 +47,50 @@ export const getArgument = key => {
 };
 
 export const log = (message, type = 'trace') => {
-  const doTrace = getArgument('trace');
+  const now = new Date(Date.now());
+  const dif = now.getTime() - info.started.getTime();
+  const sec = Math.abs(dif / 1000);
+  const min = sec >= 60 ? Math.abs(sec / 60) : 0;
+  const hour = min >= 60 ? Math.abs(min / 60) : 0;
+  const time = hour ? `${hour}h` : min ? `${min}m` : `${sec}s`;
 
-  switch (type) {
-    case 'error':
-      console.info(chalk.red('> error:'), message);
-      break;
-    case 'info':
-      console.info(chalk.cyan('> info:'), message);
-      break;
-    case 'success':
-      console.info(chalk.green('> success:'), message);
-      break;
-    case 'warning':
-      console.info(chalk.magenta('> warning:'), message);
-      break;
-    default:
-      if (doTrace) console.info(chalk.gray(`> ${type}:`), message);
-      break;
+  console.clear();
+
+  if (info.lastMessages.length >= 10) {
+    info.lastMessages.shift();
   }
+
+  const formattedTime = format(now, 'HH:mm:ss');
+
+  info.lastMessages.push({ message, type });
+  info.lastMessages.forEach(msg => {
+    let color = chalk.gray;
+
+    switch (msg.type) {
+      case 'error':
+        color = chalk.red;
+        break;
+      case 'info':
+        color = chalk.blue;
+        break;
+      case 'success':
+        color = chalk.green;
+        break;
+      case 'warning':
+        color = chalk.magenta;
+        break;
+      default:
+        color = chalk.gray;
+        break;
+    }
+
+    console.info(chalk.cyan(`${formattedTime}`), color(msg.type), msg.message);
+  });
+
+  console.info(
+    `${chalk.yellow.bold(info.processed)} of ${chalk.red.bold(
+      info.total
+    )} items processed`,
+    chalk.cyanBright(time)
+  );
 };

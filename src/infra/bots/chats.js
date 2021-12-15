@@ -7,7 +7,7 @@ import ChatsService from '../../services/chats.js';
 import MessagesService from '../../services/messages.js';
 import PagesService from '../../services/pages.js';
 
-import { execute, getArgument, log } from '../../utils.js';
+import { execute, getArgument, log, info } from '../../utils.js';
 
 import '../mongoose/connection.js';
 
@@ -17,6 +17,8 @@ const init = async () => {
     console.error(chalk.red('> err: no token provided. Use --token argument.'));
     process.exit(1);
   }
+
+  info.started = new Date(Date.now());
 
   const pagesService = new PagesService();
   const nextPage = await pagesService.find('chat');
@@ -38,7 +40,7 @@ const init = async () => {
       process.exit(1);
     }
 
-    const { chats, next_page_id, error } = response;
+    const { chats, found_chats, next_page_id, error } = response;
     if (error) {
       log(error.message, 'error');
       process.exit(1);
@@ -48,6 +50,8 @@ const init = async () => {
       log('no archives found', 'info');
       process.exit();
     }
+
+    info.total = +found_chats;
 
     const chatsRepository = new ChatsRepository();
     const messagesRepository = new MessagesRepository();
@@ -78,6 +82,9 @@ const init = async () => {
     );
 
     const addedChats = result.filter(x => !!x);
+
+    info.processed += addedChats.length;
+
     log(
       `added ${addedChats.length} chats`,
       addedChats.length ? 'success' : 'warning'
