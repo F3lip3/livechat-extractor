@@ -41,8 +41,11 @@ export default class ChatsService {
     const customer = users.find(user => user?.type === 'customer');
 
     if (!customer) {
-      log('cancelling add chat action because it has no customer', 'warning');
-      return undefined;
+      log('cancelling add chat action because it has no customer', 'warning', {
+        chatUsers: chat.users,
+        users
+      });
+      process.exit(1);
     }
 
     log('setting group');

@@ -46,7 +46,7 @@ export const getArgument = key => {
   return undefined;
 };
 
-export const log = (message, type = 'trace') => {
+export const log = (message, type = 'trace', data = undefined) => {
   const doTrace = getArgument('trace');
   if (type === 'trace' && !doTrace) {
     return;
@@ -67,7 +67,7 @@ export const log = (message, type = 'trace') => {
 
   const formattedTime = format(now, 'HH:mm:ss');
 
-  info.lastMessages.push({ message, type });
+  info.lastMessages.push({ message, type, data });
   info.lastMessages.forEach(msg => {
     let color = chalk.gray;
 
@@ -89,7 +89,20 @@ export const log = (message, type = 'trace') => {
         break;
     }
 
-    console.info(chalk.cyan(`${formattedTime}`), color(msg.type), msg.message);
+    if (msg.data) {
+      console.info(
+        chalk.cyan(`${formattedTime}`),
+        color(msg.type),
+        msg.message,
+        JSON.stringify(msg.data, null, 2)
+      );
+    } else {
+      console.info(
+        chalk.cyan(`${formattedTime}`),
+        color(msg.type),
+        msg.message
+      );
+    }
   });
 
   console.info(

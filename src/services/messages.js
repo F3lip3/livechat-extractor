@@ -44,7 +44,7 @@ export default class MessagesService {
       };
     });
 
-    log('bulk adding messages', 'info');
+    log('bulk adding messages');
     const addedMessages = await this._messagesRepository.bulkInsert(
       messagesBatch
     );
