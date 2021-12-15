@@ -88,7 +88,7 @@ export const log = (message, type = 'trace') => {
   });
 
   console.info(
-    `${chalk.yellow.bold(info.processed)} of ${chalk.red.bold(
+    `${chalk.green.bold(info.processed)} of ${chalk.magenta.bold(
       info.total
     )} items processed`,
     chalk.cyanBright(time)
