@@ -61,7 +61,7 @@ export const log = (message, type = 'trace') => {
 
   console.clear();
 
-  if (info.lastMessages.length >= 10) {
+  if (info.lastMessages.length >= 50) {
     info.lastMessages.shift();
   }
 
