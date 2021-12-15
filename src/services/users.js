@@ -32,17 +32,13 @@ export default class UsersService {
 
     try {
       const newUser = await User.create(newUserData);
-      log(`user ${user.email ?? user.email} created`);
+      log(`user ${user.email ?? user.name} created`);
       return newUser;
     } catch (err) {
       if (err.message.includes('duplicate key error')) {
         const dupUser = await this._findByUser(user_id, account_user_id);
         if (dupUser) {
-          log(
-            `user ${user.email ?? user.email} already exists`,
-            'warn',
-            dupUser
-          );
+          log(`user ${user.email ?? user.id} already exists`, 'warn', dupUser);
           return dupUser;
         }
       }
