@@ -10,14 +10,17 @@ export default class UsersService {
   }
 
   add = async user => {
-    if (!user.email) {
-      log('cancelling add user action because it has no email', 'warning');
+    if (!user.email && !user.name) {
+      log(
+        'cancelling add user action because it has no email nor name',
+        'warning'
+      );
       return undefined;
     }
 
-    log(`adding user ${user.email}`);
+    log(`adding user ${user.email ?? user.name}`);
 
-    const existingUser = await this._find(user.email);
+    const existingUser = await this._find(user.email, user.name);
     if (existingUser) {
       log(`user already exists`);
       return existingUser;
@@ -47,8 +50,10 @@ export default class UsersService {
     return newUser;
   };
 
-  _find = async email => {
-    const existingUser = await User.findOne({ email });
+  _find = async (email, name) => {
+    const existingUser = await User.findOne({
+      $or: [{ email }, { name }]
+    });
 
     return existingUser;
   };

@@ -12,8 +12,8 @@ export default class UsersRepository {
       LEFT JOIN [accountUser]
         ON [user].id = [accountUser].userId
        AND [accountUser].accountId = 6
-      WHERE email = @email`,
-      { email: user.email }
+      WHERE email = @email OR name = @name`,
+      { email: user.email, name: user.name }
     );
 
     if (existingUser) {
