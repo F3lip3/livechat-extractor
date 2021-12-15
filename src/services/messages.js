@@ -56,7 +56,7 @@ export default class MessagesService {
       }))
     );
 
-    log(`${addedMessages} messages created`, 'success');
+    log(`${addedMessages} messages created for chat ${chat.id}`, 'success');
     return true;
   };
 

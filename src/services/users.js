@@ -40,7 +40,7 @@ export default class UsersService {
         if (dupUser) {
           log(
             `user ${user.email ?? user.email} already exists`,
-            'warning',
+            'warn',
             dupUser
           );
           return dupUser;

@@ -86,7 +86,7 @@ const init = async () => {
 
     log(
       `added ${addedChats.length} chats`,
-      addedChats.length ? 'success' : 'warning'
+      addedChats.length ? 'success' : 'warn'
     );
 
     if (!next_page_id) {

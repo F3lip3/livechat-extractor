@@ -76,13 +76,13 @@ export const log = (message, type = 'trace', data = undefined) => {
         color = chalk.red;
         break;
       case 'info':
-        color = chalk.blue;
+        color = chalk.cyan;
         break;
       case 'success':
         color = chalk.green;
         break;
-      case 'warning':
-        color = chalk.magenta;
+      case 'warn':
+        color = chalk.rgb(255, 127, 80);
         break;
       default:
         color = chalk.gray;
