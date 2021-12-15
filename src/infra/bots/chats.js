@@ -49,13 +49,14 @@ const init = async () => {
       process.exit();
     }
 
-    info.total = +found_chats;
-
     const chatsRepository = new ChatsRepository();
     const messagesRepository = new MessagesRepository();
     const usersRepository = new UsersRepository();
     const chatsService = new ChatsService(chatsRepository, usersRepository);
     const messagesService = new MessagesService(messagesRepository);
+
+    if (!info.total) info.total = +found_chats;
+    if (!info.processed) info.processed = await chatsRepository.getTotalChats();
 
     log(`found ${chats.length} chats`, 'info');
     const result = await Promise.all(
@@ -63,7 +64,7 @@ const init = async () => {
         const mappedChat = await chatsService.add(chat);
         if (mappedChat) {
           if (!chat.thread?.events?.length) {
-            log('chat without messages. Moving to next');
+            log('chat without messages. Moving to next', 'info');
             return false;
           } else {
             log('adding messages');

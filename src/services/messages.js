@@ -44,19 +44,19 @@ export default class MessagesService {
       };
     });
 
-    log('bulk adding messages');
+    log('bulk adding messages', 'info');
     const addedMessages = await this._messagesRepository.bulkInsert(
       messagesBatch
     );
 
     await Message.create(
-      messagesBatch.map(message => ({
+      messagesBatch.filter(this._uniqueMessages).map(message => ({
         id: message.id,
         chat
       }))
     );
 
-    log(`${addedMessages} messages created`);
+    log(`${addedMessages} messages created`, 'success');
     return true;
   };
 
@@ -70,5 +70,9 @@ export default class MessagesService {
     const user = users.find(user => user.id === userId);
 
     return user;
+  };
+
+  _uniqueMessages = (message, index, messages) => {
+    return messages.findIndex(item => item.id === message.id) === index;
   };
 }

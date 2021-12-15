@@ -8,7 +8,7 @@ export const paths = {
 
 export const info = {
   total: 0,
-  processed: 40269,
+  processed: 0,
   started: new Date(Date.now()),
   lastMessages: []
 };
@@ -47,11 +47,16 @@ export const getArgument = key => {
 };
 
 export const log = (message, type = 'trace') => {
+  const doTrace = getArgument('trace');
+  if (type === 'trace' && !doTrace) {
+    return;
+  }
+
   const now = new Date(Date.now());
   const dif = now.getTime() - info.started.getTime();
-  const sec = Math.abs(dif / 1000);
-  const min = sec >= 60 ? Math.abs(sec / 60) : 0;
-  const hour = min >= 60 ? Math.abs(min / 60) : 0;
+  const sec = Math.floor(Math.abs(dif / 1000));
+  const min = sec >= 60 ? Math.floor(Math.abs(sec / 60)) : 0;
+  const hour = min >= 60 ? Math.floor(Math.abs(min / 60)) : 0;
   const time = hour ? `${hour}h` : min ? `${min}m` : `${sec}s`;
 
   console.clear();

@@ -38,4 +38,15 @@ export default class ChatsRepository {
       id: newChat.id
     };
   };
+
+  getTotalChats = async () => {
+    const result = await query(
+      `
+      SELECT COUNT(*) as [total]
+      FROM [chatConversation] WITH(NOLOCK)
+      WHERE [accountId] = 6;`
+    );
+
+    return result.total;
+  };
 }

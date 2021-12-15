@@ -15,12 +15,12 @@ export default class ChatsService {
 
   add = async chat => {
     if (!chat.thread?.id) {
-      log('cancelling add chat action because it has no thread');
+      log('cancelling add chat action because it has no thread', 'warning');
       return undefined;
     }
 
     if (!chat.users?.length) {
-      log('cancelling add chat action because it has no users');
+      log('cancelling add chat action because it has no users', 'warning');
       return undefined;
     }
 
@@ -30,7 +30,7 @@ export default class ChatsService {
     });
 
     if (existingChat) {
-      log('chat already exists');
+      log('chat already exists', 'warning');
       return existingChat;
     }
 
@@ -41,7 +41,7 @@ export default class ChatsService {
     const customer = users.find(user => user?.type === 'customer');
 
     if (!customer) {
-      log('cancelling add chat action because it has no customer');
+      log('cancelling add chat action because it has no customer', 'warning');
       return undefined;
     }
 
@@ -64,7 +64,7 @@ export default class ChatsService {
       group
     });
 
-    log('chat created');
+    log('chat created', 'success');
     return newChat;
   };
 

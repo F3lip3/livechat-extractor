@@ -11,7 +11,7 @@ export default class UsersService {
 
   add = async user => {
     if (!user.email) {
-      log('cancelling add user action because it has no email');
+      log('cancelling add user action because it has no email', 'warning');
       return undefined;
     }
 
