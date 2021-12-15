@@ -18,8 +18,6 @@ const init = async () => {
     process.exit(1);
   }
 
-  info.started = new Date(Date.now());
-
   const pagesService = new PagesService();
   const nextPage = await pagesService.find('chat');
 
