@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
 import Ticket from '../schemas/Ticket.js';
-import Team from '../schemas/Group.js';
+import Team from '../schemas/Team.js';
 import UsersService from '../services/users.js';
 import { log } from '../utils.js';
 
@@ -66,7 +66,7 @@ export default class TicketsService {
       groupId: team?.account_group_id,
       subject: ticket.subject,
       createdAt: new Date(ticket.createdAt),
-      solvedAt: new Date(ticket.lastMessageAt)
+      solvedAt: new Date(ticket.updatedAt)
     };
 
     log('adding ticket to database', 'trace', ticketData);

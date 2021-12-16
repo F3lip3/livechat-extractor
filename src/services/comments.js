@@ -49,7 +49,7 @@ export default class CommentsService {
     log('building comments batch');
     const commentsBatch = await Promise.all(
       newComments.map(async comment => {
-        const user = this._findUser({
+        const user = await this._findUser({
           id: uuid(),
           email: comment.author?.email ?? comment.author?.name ?? uuid(),
           name: comment.author?.name ?? uuid(),
