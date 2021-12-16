@@ -1,8 +1,10 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
 
-import TicketsRepository from '../../repositories/tickets';
+import CommentsRepository from '../../repositories/comments.js';
+import TicketsRepository from '../../repositories/tickets.js';
 import UsersRepository from '../../repositories/users.js';
+import CommentsService from '../../services/comments.js';
 import PagesService from '../../services/pages.js';
 import TicketsService from '../../services/tickets.js';
 import { execute, getArgument, log, info } from '../../utils.js';
@@ -42,8 +44,15 @@ const init = () => {
       process.exit();
     }
 
-    const ticketsRepository = new TicketsRepository();
     const usersRepository = new UsersRepository();
+    const commentsRepository = new CommentsRepository();
+    const ticketsRepository = new TicketsRepository();
+
+    const commentsService = new CommentsService(
+      commentsRepository,
+      usersRepository
+    );
+
     const ticketsService = new TicketsService(
       ticketsRepository,
       usersRepository
@@ -59,6 +68,19 @@ const init = () => {
       tickets.map(async ticket => {
         const mappedTicket = await ticketsService.add(ticket);
         if (mappedTicket) {
+          if (!ticket.events?.length) {
+            log('ticket without events. Moving to next', 'info');
+            return false;
+          } else {
+            log('adding comments');
+            const commentsResult = await commentsService.add({
+              ticketId: ticket['ID'],
+              comments: ticket.events
+            });
+
+            return commentsResult;
+          }
+
           return true;
         }
 
