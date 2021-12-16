@@ -32,7 +32,7 @@ const init = async () => {
     --header 'Content-Type: application/json' \
     --data '${JSON.stringify(filters)}'`;
 
-  const output = execute(command, async (err, response) => {
+  execute(command, async (err, response) => {
     if (!!err) {
       log(JSON.stringify(err), 'error');
       process.exit(1);

@@ -9,7 +9,7 @@ import PagesService from '../../services/pages.js';
 import TicketsService from '../../services/tickets.js';
 import { execute, getArgument, log, info } from '../../utils.js';
 
-const init = () => {
+const init = async () => {
   const token = getArgument('token');
   if (!token) {
     log('no token provided. Use --token argument.', 'error');
@@ -28,7 +28,7 @@ const init = () => {
     --url 'https://api.helpdesk.com/v1/tickets?sortBy=updatedAt&order=desc&page=${page}&pageSize=100' \
     --header 'Authorization: Bearer ${token}'`;
 
-  const output = execute(command, (err, tickets) => {
+  execute(command, async (err, tickets) => {
     if (!!err) {
       log(JSON.stringify(err), 'error');
       process.exit(1);

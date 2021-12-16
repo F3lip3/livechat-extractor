@@ -90,7 +90,7 @@ export default class CommentsService {
     return existingComment;
   };
 
-  _findUser = userData => {
+  _findUser = async userData => {
     const existingUser = this._users.find(usr => usr.email === userData.email);
     if (existingUser) {
       return existingUser;
