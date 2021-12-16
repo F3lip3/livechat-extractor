@@ -27,7 +27,7 @@ const init = async () => {
   }
 
   const command = `curl --request GET \
-    --url 'https://api.helpdesk.com/v1/tickets?sortBy=updatedAt&order=desc&page=${page}&pageSize=1' \
+    --url 'https://api.helpdesk.com/v1/tickets?sortBy=updatedAt&order=desc&page=${page}&pageSize=100' \
     --header 'Authorization: Bearer ${token}'`;
 
   execute(command, async (err, tickets) => {
@@ -99,13 +99,13 @@ const init = async () => {
       addedTickets.length ? 'success' : 'warn'
     );
 
-    // await pagesService.add({
-    //   object: 'ticket',
-    //   next_page: page + 1,
-    //   next_page_id: undefined
-    // });
+    await pagesService.add({
+      object: 'ticket',
+      next_page: page + 1,
+      next_page_id: undefined
+    });
 
-    // await init();
+    await init();
   });
 };
 
