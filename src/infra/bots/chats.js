@@ -14,7 +14,7 @@ import '../mongoose/connection.js';
 const init = async () => {
   const token = getArgument('token');
   if (!token) {
-    console.error(chalk.red('> err: no token provided. Use --token argument.'));
+    log('no token provided. Use --token argument.', 'error');
     process.exit(1);
   }
 
@@ -34,7 +34,7 @@ const init = async () => {
 
   const output = execute(command, async (err, response) => {
     if (!!err) {
-      console.error(chalk.red('> err:'), err);
+      log(JSON.stringify(err), 'error');
       process.exit(1);
     }
 

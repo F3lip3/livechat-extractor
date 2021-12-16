@@ -4,10 +4,11 @@ export default class GroupsRepository {
   findOrInsert = async group => {
     const existingGroup = await query(
       `
-      SELECT [group].id,
-             [group].name,
-             [group].isActive,
-             [accountGroup].id as [accountGroupId]
+      SELECT TOP 1
+        [group].id,
+        [group].name,
+        [group].isActive,
+        [accountGroup].id as [accountGroupId]
       FROM [group] WITH(NOLOCK)
       LEFT JOIN [accountGroup]
         ON [group].id = [accountGroup].groupId

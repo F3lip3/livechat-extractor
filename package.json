@@ -8,6 +8,7 @@
     "start": "live-server --port=3000 --host=localhost src/index.html",
     "extract-chats": "node src/infra/bots/chats",
     "extract-groups": "node src/infra/bots/groups",
+    "extract-teams": "node src/infra/bots/teams",
     "extract-tickets": "node src/infra/bots/tickets"
   },
   "devDependencies": {

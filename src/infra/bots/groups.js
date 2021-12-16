@@ -22,7 +22,7 @@ const init = () => {
 
   execute(command, async (err, groups) => {
     if (!!err) {
-      console.error(chalk.red('> err:'), err);
+      log.error(JSON.stringify(err), 'error');
       process.exit(1);
     }
 
