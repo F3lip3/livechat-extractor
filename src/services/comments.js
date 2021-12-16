@@ -110,7 +110,9 @@ export default class CommentsService {
 
     return (
       '<b>Anexos:</b><br />' +
-      files.map(file => `<a href="${file.url}">${file.name}</a>`).join('<br>')
+      files
+        .map(file => `<a href="${file.url}" target="_blank">${file.name}</a>`)
+        .join('<br>')
     );
   };
 
