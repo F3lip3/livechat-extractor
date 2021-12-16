@@ -16,6 +16,11 @@ export default class TicketsService {
   }
 
   add = async ticket => {
+    if (!ticket.shortID) {
+      log('invalid ticket', 'error', ticket);
+      return undefined;
+    }
+
     if (!ticket.requester) {
       log('ticket without requester', 'error');
       return undefined;
@@ -55,15 +60,19 @@ export default class TicketsService {
       ? await this._findTeam(ticket.assignment?.team?.ID)
       : undefined;
 
-    log('adding ticket to database');
-    const { id: ticket_id } = await this._ticketsRepository.findOrInsert({
+    const ticketData = {
       externalId: ticket.shortID,
       userId: user.account_user_id,
       groupId: team?.account_group_id,
       subject: ticket.subject,
       createdAt: new Date(ticket.createdAt),
       solvedAt: new Date(ticket.lastMessageAt)
-    });
+    };
+
+    log('adding ticket to database', 'info', ticketData);
+    const { id: ticket_id } = await this._ticketsRepository.findOrInsert(
+      ticketData
+    );
 
     log('saving ticket');
     const newTicket = await Ticket.create({
@@ -83,7 +92,7 @@ export default class TicketsService {
   };
 
   _find = async ({ id }) => {
-    const existingTicket = await Ticket.findOne({ id }).populate('users');
+    const existingTicket = await Ticket.findOne({ id });
 
     return existingTicket;
   };

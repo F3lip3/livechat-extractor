@@ -7,7 +7,7 @@ const CommentSchema = new mongoose.Schema(
       required: true
     },
     ticketId: {
-      type: String,
+      type: Number,
       required: true
     }
   },

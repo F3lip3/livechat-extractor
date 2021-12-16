@@ -5,11 +5,11 @@ export default class CommentsRepository {
   bulkInsert = async comments => {
     const table = new mssql.Table('ticketComment');
 
-    table.columns.add('accountUserAuthorId', mssql.BigInt, { nullable: false });
+    table.columns.add('accountUserAuthorId', mssql.BigInt, { nullable: true });
     table.columns.add('ticketId', mssql.BigInt, { nullable: false });
-    table.columns.add('value', mssql.VarChar(mssql.MAX), { nullable: false });
+    table.columns.add('value', mssql.NVarChar(mssql.MAX), { nullable: false });
     table.columns.add('isPublic', mssql.Bit, { nullable: false });
-    table.columns.add('createdAt', mssql.DateTime, { nullable: false });
+    table.columns.add('createdAt', mssql.DateTime, { nullable: true });
 
     comments.map(({ userId, ticketId, text, createdAt }) => {
       table.rows.add(userId, ticketId, text, 1, new Date(createdAt));

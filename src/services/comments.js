@@ -41,7 +41,7 @@ export default class CommentsService {
       return !exists;
     });
 
-    if (!newComments) {
+    if (!newComments.length) {
       log('all comments already exists');
       return false;
     }
@@ -57,6 +57,7 @@ export default class CommentsService {
         });
 
         return {
+          id: comment['ID'],
           userId: user.account_user_id,
           ticketId,
           text:
@@ -68,14 +69,14 @@ export default class CommentsService {
       })
     );
 
-    log('bulking add comments');
+    log('bulk adding comments', 'info', commentsBatch);
     const addedComments = await this._commentsRepository.bulkInsert(
       commentsBatch
     );
 
     await Comment.create(
-      commentsBatch.filter(this._uniqueComments).map(comment => ({
-        id: comment['ID'],
+      commentsBatch.filter(this._uniqueComments).map(({ id }) => ({
+        id,
         ticketId
       }))
     );
@@ -114,7 +115,7 @@ export default class CommentsService {
   };
 
   _formatValue = value => {
-    return value.replace(/\n/g, '<br>');
+    return value.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>');
   };
 
   _uniqueComments = (comment, index, comments) => {

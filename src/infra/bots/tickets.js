@@ -9,6 +9,8 @@ import PagesService from '../../services/pages.js';
 import TicketsService from '../../services/tickets.js';
 import { execute, getArgument, log, info } from '../../utils.js';
 
+import '../mongoose/connection.js';
+
 const init = async () => {
   const token = getArgument('token');
   if (!token) {
@@ -74,14 +76,16 @@ const init = async () => {
           } else {
             log('adding comments');
             const commentsResult = await commentsService.add({
-              ticketId: ticket['ID'],
+              ticketId: mappedTicket.ticket_id,
               comments: ticket.events
             });
 
+            if (commentsResult) {
+              info.processed += 1;
+            }
+
             return commentsResult;
           }
-
-          return true;
         }
 
         return false;
@@ -89,8 +93,6 @@ const init = async () => {
     );
 
     const addedTickets = result.filter(x => !!x);
-
-    info.processed += addedTickets.length;
 
     log(
       `added ${addedTickets.length} tickets`,
