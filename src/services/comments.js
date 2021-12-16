@@ -35,7 +35,7 @@ export default class CommentsService {
       return false;
     }
 
-    log('checking existing comments', 'info');
+    log('checking existing comments');
     const newComments = await asyncFilter(mappedComments, async comment => {
       const exists = await this._find({ id: comment['ID'], ticketId });
       return !exists;
@@ -69,7 +69,7 @@ export default class CommentsService {
       })
     );
 
-    log('bulk adding comments', 'info', commentsBatch);
+    log('bulk adding comments', 'trace', commentsBatch);
     const addedComments = await this._commentsRepository.bulkInsert(
       commentsBatch
     );

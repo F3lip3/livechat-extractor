@@ -33,7 +33,7 @@ export default class TicketsService {
 
     const existingTicket = await this._find({ id: ticket['ID'] });
     if (existingTicket) {
-      log(`ticket ${ticket.shortID} already exists`, 'warn');
+      log(`ticket ${ticket.shortID} already exists`);
       return existingTicket;
     }
 
@@ -69,7 +69,7 @@ export default class TicketsService {
       solvedAt: new Date(ticket.lastMessageAt)
     };
 
-    log('adding ticket to database', 'info', ticketData);
+    log('adding ticket to database', 'trace', ticketData);
     const { id: ticket_id } = await this._ticketsRepository.findOrInsert(
       ticketData
     );
