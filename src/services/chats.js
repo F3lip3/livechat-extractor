@@ -30,7 +30,7 @@ export default class ChatsService {
     });
 
     if (existingChat) {
-      log('chat already exists', 'warn');
+      log('chat already exists');
       return existingChat;
     }
 

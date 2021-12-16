@@ -38,7 +38,7 @@ export default class UsersService {
       if (err.message.includes('duplicate key error')) {
         const dupUser = await this._findByUser(user_id, account_user_id);
         if (dupUser) {
-          log(`user ${user.email ?? user.id} already exists`, 'warn', dupUser);
+          log(`user ${user.email ?? user.id} already exists`, 'trace', dupUser);
           return dupUser;
         }
       }
