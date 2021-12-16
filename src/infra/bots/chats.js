@@ -95,7 +95,11 @@ const init = async () => {
     }
 
     log('fetching next page', 'info');
-    await pagesService.add({ object: 'chat', next_page_id });
+    await pagesService.add({
+      object: 'chat',
+      next_page: undefined,
+      next_page_id
+    });
     await init();
   });
 };

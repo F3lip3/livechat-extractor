@@ -7,9 +7,10 @@ const PageSchema = new mongoose.Schema(
       required: true
     },
     next_page_id: {
-      type: String,
-      required: true,
-      unique: true
+      type: String
+    },
+    next_page: {
+      type: Number
     }
   },
   {

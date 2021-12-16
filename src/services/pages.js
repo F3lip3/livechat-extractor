@@ -1,9 +1,10 @@
 import Page from '../schemas/Page.js';
 
 export default class PagesService {
-  add = async ({ object, next_page_id }) => {
+  add = async ({ object, next_page, next_page_id }) => {
     await Page.create({
       object,
+      next_page,
       next_page_id
     });
   };
