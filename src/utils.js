@@ -112,3 +112,11 @@ export const log = (message, type = 'trace', data = undefined) => {
     chalk.cyanBright(time)
   );
 };
+
+export const truncate = (value, size) => {
+  if (value.length > size) {
+    return value.substring(0, size - 3) + '...';
+  }
+
+  return value;
+};

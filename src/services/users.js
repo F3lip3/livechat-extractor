@@ -1,6 +1,6 @@
 import User from '../schemas/User.js';
 import UsersRepository from '../repositories/users.js';
-import { log } from '../utils.js';
+import { log, truncate } from '../utils.js';
 
 export default class UsersService {
   _usersRepository;
@@ -23,8 +23,8 @@ export default class UsersService {
 
     const newUserData = {
       id: user.id,
-      name: user.name?.trim() || user.id,
-      email: user.email?.trim() || user.id,
+      name: truncate(user.name?.trim() || user.id, 150),
+      email: truncate(user.email?.trim() || user.id, 150),
       type: user.type,
       user_id,
       account_user_id
