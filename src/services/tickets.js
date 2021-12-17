@@ -64,7 +64,7 @@ export default class TicketsService {
       externalId: ticket.shortID,
       userId: user.account_user_id,
       groupId: team?.account_group_id,
-      subject: ticket.subject,
+      subject: this._formatSubject(ticket.subject),
       createdAt: new Date(ticket.createdAt),
       solvedAt: new Date(ticket.updatedAt)
     };
@@ -103,5 +103,14 @@ export default class TicketsService {
     }
 
     return this._allTeams.find(team => team.id === teamId);
+  };
+
+  _formatSubject = async subject => {
+    if (!subject) return '';
+    if (subject.length >= 300) {
+      return subject.substring(0, 295) + '...';
+    }
+
+    return subject;
   };
 }
