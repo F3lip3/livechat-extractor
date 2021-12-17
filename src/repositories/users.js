@@ -1,8 +1,11 @@
 import { query } from '../infra/mssql/database.js';
-import { log } from '../utils.js';
+import { log, truncate } from '../utils.js';
 
 export default class UsersRepository {
   findOrInsert = async user => {
+    user.name = truncate(user.name, 150);
+    user.email = truncate(user.email ?? user.id, 150);
+
     const filter =
       user.email || user.name
         ? `${user.email ? 'email = @email' : 'name = @name'}`
@@ -18,7 +21,7 @@ export default class UsersRepository {
         ON [user].id = [accountUser].userId
       AND [accountUser].accountId = 6
       WHERE ${filter}`,
-      { email: user.email ?? user.id, name: user.name }
+      { email: user.email, name: user.name }
     );
 
     if (existingUser) {
@@ -40,7 +43,7 @@ export default class UsersRepository {
       OUTPUT inserted.id
       VALUES (0, @name, @email, 1, GETDATE(), GETDATE())
     `,
-      { name: user.name, email: user.email ?? user.id }
+      { name: user.name, email: user.email }
     );
 
     const accountUser = await this._linkUserToAccount(newUser.id, true);
